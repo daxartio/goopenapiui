@@ -8,52 +8,54 @@ import (
 	"text/template"
 )
 
-const OpenapiUrl = "/openapi.json"
-const SwaggerUrl = "/docs"
-const SwaggerJSUrl = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"
-const SwaggerCSSUrl = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css"
-const SwaggerFaviconUrl = "https://static1.smartbear.co/swagger/media/assets/swagger_fav.png"
+const (
+	OpenapiURL        = "/openapi.json"
+	SwaggerURL        = "/docs"
+	SwaggerjsURL      = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"
+	SwaggercssURL     = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css"
+	SwaggerFaviconURL = "https://static1.smartbear.co/swagger/media/assets/swagger_fav.png"
+)
 
 //go:embed assets/swagger-ui.html
 var SwaggerHTML string
 
-type Openapiui struct {
+type OpenapiUI struct {
 	Title             string
 	Description       string
 	Openapi           []byte
-	OpenapiUrl        string
-	SwaggerUrl        string
-	SwaggerJSUrl      string
-	SwaggerCSSUrl     string
-	SwaggerFaviconUrl string
+	OpenapiURL        string
+	SwaggerURL        string
+	SwaggerjsURL      string
+	SwaggercssURL     string
+	SwaggerFaviconURL string
 }
 
-func (o *Openapiui) SwaggerUI() ([]byte, error) {
+func (o *OpenapiUI) SwaggerUI() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	tpl, err := template.New("swaggerui").Parse(SwaggerHTML)
 	if err != nil {
 		return nil, err
 	}
 
-	if o.SwaggerJSUrl == "" {
-		o.SwaggerJSUrl = SwaggerJSUrl
+	if o.SwaggerjsURL == "" {
+		o.SwaggerjsURL = SwaggerjsURL
 	}
 
-	if o.SwaggerCSSUrl == "" {
-		o.SwaggerCSSUrl = SwaggerCSSUrl
+	if o.SwaggercssURL == "" {
+		o.SwaggercssURL = SwaggercssURL
 	}
 
-	if o.SwaggerFaviconUrl == "" {
-		o.SwaggerFaviconUrl = SwaggerFaviconUrl
+	if o.SwaggerFaviconURL == "" {
+		o.SwaggerFaviconURL = SwaggerFaviconURL
 	}
 
 	if err = tpl.Execute(buf, map[string]string{
 		"title":       o.Title,
 		"description": o.Description,
-		"openapiurl":  o.OpenapiUrl,
-		"jsurl":       o.SwaggerJSUrl,
-		"cssurl":      o.SwaggerCSSUrl,
-		"iconurl":     o.SwaggerFaviconUrl,
+		"openapiurl":  o.OpenapiURL,
+		"jsurl":       o.SwaggerjsURL,
+		"cssurl":      o.SwaggercssURL,
+		"iconurl":     o.SwaggerFaviconURL,
 	}); err != nil {
 		return nil, err
 	}
@@ -62,24 +64,24 @@ func (o *Openapiui) SwaggerUI() ([]byte, error) {
 }
 
 // Handler sets some defaults and returns a HandlerFunc
-func (r *Openapiui) Handler() http.HandlerFunc {
+func (r *OpenapiUI) Handler() http.HandlerFunc {
 	html, err := r.SwaggerUI()
 	if err != nil {
 		panic(err)
 	}
 
-	var openapiUrl string
-	if r.OpenapiUrl == "" {
-		openapiUrl = OpenapiUrl
+	var openapiURL string
+	if r.OpenapiURL == "" {
+		openapiURL = OpenapiURL
 	} else {
-		openapiUrl = r.OpenapiUrl
+		openapiURL = r.OpenapiURL
 	}
 
-	var swaggerUrl string
-	if r.SwaggerUrl == "" {
-		swaggerUrl = SwaggerUrl
+	var swaggerURL string
+	if r.SwaggerURL == "" {
+		swaggerURL = SwaggerURL
 	} else {
-		swaggerUrl = r.SwaggerUrl
+		swaggerURL = r.SwaggerURL
 	}
 
 	openapi := r.Openapi
@@ -91,14 +93,14 @@ func (r *Openapiui) Handler() http.HandlerFunc {
 		}
 
 		header := w.Header()
-		if req.URL.Path == openapiUrl {
+		if req.URL.Path == openapiURL {
 			header.Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write(openapi)
 			return
 		}
 
-		if req.URL.Path == swaggerUrl {
+		if req.URL.Path == swaggerURL {
 			header.Set("Content-Type", "text/html")
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write(html)

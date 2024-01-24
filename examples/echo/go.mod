@@ -8,8 +8,8 @@ replace (
 )
 
 require (
-	github.com/daxartio/goopenapiui v0.0.0
-	github.com/daxartio/goopenapiui/echo v0.0.0
+	github.com/daxartio/goopenapiui v0.2.0
+	github.com/daxartio/goopenapiui/echo v0.2.0
 	github.com/labstack/echo/v4 v4.11.4
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func New(openapiui *goopenapiui.Openapiui) echo.MiddlewareFunc {
+func New(openapiui *goopenapiui.OpenapiUI) echo.MiddlewareFunc {
 	handle := openapiui.Handler()
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {

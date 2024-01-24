@@ -13,12 +13,12 @@ import (
 var openapiJson []byte
 
 func main() {
-	openapiui := &goopenapiui.Openapiui{
+	openapiui := &goopenapiui.OpenapiUI{
 		Title:       "Example API",
 		Description: "Example API Description",
 		Openapi:     openapiJson,
-		OpenapiUrl:  "/openapi.json",
-		SwaggerUrl:  "/docs",
+		OpenapiURL:  "/openapi.json",
+		SwaggerURL:  "/docs",
 	}
 	e := echo.New()
 	e.Use(echoopenapiui.New(openapiui))

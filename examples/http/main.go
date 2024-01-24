@@ -11,12 +11,12 @@ import (
 var openapiJson []byte
 
 func main() {
-	openapiui := &goopenapiui.Openapiui{
+	openapiui := &goopenapiui.OpenapiUI{
 		Title:       "Example API",
 		Description: "Example API Description",
 		Openapi:     openapiJson,
-		OpenapiUrl:  "/openapi.json",
-		SwaggerUrl:  "/docs",
+		OpenapiURL:  "/openapi.json",
+		SwaggerURL:  "/docs",
 	}
 
 	println("Documentation served at http://127.0.0.1:8000/docs")

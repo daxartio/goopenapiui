@@ -3,7 +3,7 @@ module github.com/daxartio/goopenapiui/echo
 go 1.21.6
 
 require (
-	github.com/daxartio/goopenapiui v0.0.0
+	github.com/daxartio/goopenapiui v0.2.0
 	github.com/labstack/echo/v4 v4.11.4
 )
 
