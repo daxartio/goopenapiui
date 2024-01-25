@@ -3,6 +3,8 @@ package goopenapiui
 import (
 	"bytes"
 	_ "embed"
+	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"text/template"
@@ -19,6 +21,11 @@ const (
 //go:embed assets/swagger-ui.html
 var SwaggerHTML string
 
+var (
+	ErrRenderSwaggerUI = errors.New("render swagger ui failed")
+	ErrParseSwaggerUI  = errors.New("parse swagger ui failed")
+)
+
 type OpenapiUI struct {
 	Title             string
 	Description       string
@@ -32,9 +39,10 @@ type OpenapiUI struct {
 
 func (o *OpenapiUI) SwaggerUI() ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
+
 	tpl, err := template.New("swaggerui").Parse(SwaggerHTML)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", ErrParseSwaggerUI, err)
 	}
 
 	if o.SwaggerjsURL == "" {
@@ -57,53 +65,54 @@ func (o *OpenapiUI) SwaggerUI() ([]byte, error) {
 		"cssurl":      o.SwaggercssURL,
 		"iconurl":     o.SwaggerFaviconURL,
 	}); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %w", ErrRenderSwaggerUI, err)
 	}
 
 	return buf.Bytes(), nil
 }
 
-// Handler sets some defaults and returns a HandlerFunc
-func (r *OpenapiUI) Handler() http.HandlerFunc {
-	html, err := r.SwaggerUI()
+// Handler sets some defaults and returns a HandlerFunc.
+func (o *OpenapiUI) Handler() http.HandlerFunc {
+	html, err := o.SwaggerUI()
 	if err != nil {
 		panic(err)
 	}
 
 	var openapiURL string
-	if r.OpenapiURL == "" {
+	if o.OpenapiURL == "" {
 		openapiURL = OpenapiURL
 	} else {
-		openapiURL = r.OpenapiURL
+		openapiURL = o.OpenapiURL
 	}
 
 	var swaggerURL string
-	if r.SwaggerURL == "" {
+	if o.SwaggerURL == "" {
 		swaggerURL = SwaggerURL
 	} else {
-		swaggerURL = r.SwaggerURL
+		swaggerURL = o.SwaggerURL
 	}
 
-	openapi := r.Openapi
+	openapi := o.Openapi
 
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(writer http.ResponseWriter, req *http.Request) {
 		method := strings.ToLower(req.Method)
 		if method != "get" && method != "head" {
 			return
 		}
 
-		header := w.Header()
+		header := writer.Header()
 		if req.URL.Path == openapiURL {
 			header.Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write(openapi)
+			writer.WriteHeader(http.StatusOK)
+			_, _ = writer.Write(openapi)
+
 			return
 		}
 
 		if req.URL.Path == swaggerURL {
 			header.Set("Content-Type", "text/html")
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write(html)
+			writer.WriteHeader(http.StatusOK)
+			_, _ = writer.Write(html)
 		}
 	}
 }

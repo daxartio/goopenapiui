@@ -10,6 +10,7 @@ deps:
 .PHONY: fmt
 fmt:
 	go fmt ./...
+	golangci-lint run --fix --new ./...
 
 .PHONY: check
 check:
