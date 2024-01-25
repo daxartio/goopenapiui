@@ -1,5 +1,8 @@
 # goopenapiui
 
+[![Go Documentation](https://godocs.io/github.com/daxartio/goopenapiui?status.svg)](https://godocs.io/github.com/daxartio/goopenapiui)
+
+
 goopenapiui is an embedded OpenAPI documentation ui for Go using Swagger UI and Go's 1.16+'s embed package, with middleware implementations for: net/http and echo.
 
 This package does not generate openapi spec file.
