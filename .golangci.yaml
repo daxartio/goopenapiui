@@ -12,3 +12,4 @@ linters:
     - varcheck
     - interfacer
     - depguard
+    - funlen
