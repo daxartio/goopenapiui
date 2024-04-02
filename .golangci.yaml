@@ -1,3 +1,7 @@
+# run:
+#   skip-dirs:
+#     - "examples/"
+
 linters:
   enable-all: true
   disable:
@@ -11,5 +15,18 @@ linters:
     - structcheck
     - varcheck
     - interfacer
-    - depguard
-    - funlen
+
+linters-settings:
+  gocritic:
+    enable-all: true
+  sloglint:
+    static-msg: true
+    context-only: true
+  depguard:
+    rules:
+      main:
+        list-mode: strict
+        files:
+          - "!$all"
+        allow:
+          - $gostd

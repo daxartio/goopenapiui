@@ -1,7 +1,7 @@
 DEFAULT_GOAL := all
 
 .PHONY: all
-all: fmt check test
+all: tidy fmt check test
 
 .PHONY: deps
 deps:

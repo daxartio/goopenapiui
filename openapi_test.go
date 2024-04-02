@@ -9,7 +9,7 @@ import (
 	"github.com/daxartio/goopenapiui"
 )
 
-func TestOpenapiui(t *testing.T) {
+func TestOpenapiui(t *testing.T) { //nolint:funlen
 	openapiui := &goopenapiui.OpenapiUI{
 		Title:             "Example API",
 		Description:       "Example API Description",
@@ -27,18 +27,23 @@ func TestOpenapiui(t *testing.T) {
 
 		t.Run("Spec", func(t *testing.T) {
 			t.Parallel()
+
 			req := httptest.NewRequest(http.MethodGet, "/openapi.json", nil)
+
 			recorder := httptest.NewRecorder()
 			handler(recorder, req)
 
 			resp := recorder.Result()
 			defer resp.Body.Close()
+
 			if resp.StatusCode != http.StatusOK {
 				t.Errorf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
 			}
+
 			if resp.Header.Get("Content-Type") != "application/json" {
 				t.Errorf("expected Content-Type %q, got %q", "application/json", resp.Header.Get("Content-Type"))
 			}
+
 			if resp.Header.Get("Cache-Control") != "public, max-age=86400" {
 				t.Errorf("expected Cache-Control %q, got %q", "public, max-age=86400", resp.Header.Get("Cache-Control"))
 			}
@@ -51,6 +56,7 @@ func TestOpenapiui(t *testing.T) {
 
 		t.Run("Docs", func(t *testing.T) {
 			t.Parallel()
+
 			req := httptest.NewRequest(http.MethodGet, "/docs", nil)
 			recorder := httptest.NewRecorder()
 			handler(recorder, req)
@@ -61,9 +67,11 @@ func TestOpenapiui(t *testing.T) {
 			if resp.StatusCode != http.StatusOK {
 				t.Errorf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
 			}
+
 			if resp.Header.Get("Content-Type") != "text/html" {
 				t.Errorf("expected Content-Type %q, got %q", "text/html", resp.Header.Get("Content-Type"))
 			}
+
 			if resp.Header.Get("Cache-Control") != "public, max-age=86400" {
 				t.Errorf("expected Cache-Control %q, got %q", "public, max-age=86400", resp.Header.Get("Cache-Control"))
 			}
@@ -94,12 +102,14 @@ func TestOpenapiuiNoCache(t *testing.T) {
 
 		t.Run("Spec", func(t *testing.T) {
 			t.Parallel()
+
 			req := httptest.NewRequest(http.MethodGet, "/openapi.json", nil)
 			recorder := httptest.NewRecorder()
 			handler(recorder, req)
 
 			resp := recorder.Result()
 			defer resp.Body.Close()
+
 			if resp.Header.Get("Cache-Control") != "" {
 				t.Errorf("expected Cache-Control %q, got %q", "", resp.Header.Get("Cache-Control"))
 			}
@@ -107,6 +117,7 @@ func TestOpenapiuiNoCache(t *testing.T) {
 
 		t.Run("Docs", func(t *testing.T) {
 			t.Parallel()
+
 			req := httptest.NewRequest(http.MethodGet, "/docs", nil)
 			recorder := httptest.NewRecorder()
 			handler(recorder, req)
